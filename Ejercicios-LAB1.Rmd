@@ -1,0 +1,105 @@
+---
+title: "Ejercicios y casos prácticos con R -1"
+author: "cserranopinto"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+### Ejercicio 1:
+
+Comprueba	qué	paquetes	tienes instalados	en	vuestra	versión	de	RStudio	e	instala	el paquete	MASS	y	el	paquete	Survival	y	comprueba	la	información	que	contienen.	
+Busca	información	sobre	el	paquete	Rcmdr	(R	Commander)	desde	la	consola.
+
+
+```{r echo=TRUE}
+library() # Comprueba que paquetes se tienen instalados
+install.packages("MASS")
+install.packages("Survival")
+??Rcmdr # Consulta sobre función
+```
+
+### Ejercicio 2:
+
+a) Importa un archivo de texto y busca un *summary()* de 3 variables
+b) Importa un archivo '.csv' y busca un *fivenum()* de 2 variables
+
+```{r echo=TRUE}
+library(readr)
+covid_data <- read_csv('country_wise_latest.csv') # Importa archivo
+kable(head(covid_data)) # Muestra en forma de tabla primeros resultados
+summary(covid_data) # Resumen estadístico
+```
+
+
+*fivenum* entrega los estadísticos de variable asignada en el orden:
+minimum, lower-hinge, median, upper-hinge, maximum.
+lower-hinge : median of the lower half of the data up to and including the median
+upper-hinge : median of the upper half of the data up to and including the median
+```{r echo =TRUE}
+fivenum(covid_data$var1) # Revisar
+fivenum(covid_data$var2)
+```
+
+
+
+### Ejercicio 3:
+
+A partir 	del	conjunto	de	datos	anorexia	del	paquete	MASS,	que corresponden	a	los	datos	de cambio	de	peso	de	pacientes	jóvenes	con	anorexia,	mostrad	los	tipos	de	datos	que	contiene y	comprobad	si	existen	valores	NA	y	NULL.	Para	la	variable	Treat,	transformad	los	valores	«CBT»,	«Cont»	y	FT	en	«Cogn	Beh	Tr»,	«Contr»	y	«Fam	Tr»,	respectivamente.	
+
+```{r echo=TRUE}
+library(MASS)
+data("anorexia") # Se carga datos anorexia
+head(anorexia) # Muestra primeros resultados
+```
+
+```{r echo=TRUE}
+table(is.na(anorexia)) # Muestra cuantos valores nulos hay
+```
+
+
+```{r echo=TRUE}
+anorexia_F <- factor(anorexia$Treat, levels=c("CBT","Cont","FT"),
+                     labels=c("Cogn Beh	Tr","Contr","Fam Tr"))
+anorexia_F
+```
+
+
+### Ejercicio 4:
+
+a) Exportad	los	datos	biopsy	del	paquete	MASS	a	un	archivo	«.csv.»
+b) Exportad	los	datos	melanoma	del	paquete	MASS	a	archivos	de	tres	diferentes
+formatos y	comprobad	que	se	han	creado	los	diferentes	archivos	en	los	formatos	y	las	rutas
+especificados. Podéis	generar	una	captura	de	pantalla	de	su	ubicación	en	la	carpeta.
+c) Generad	un	resumen	(summary)	de	la	variable	age	de	melanoma	y	guardad	la	salida
+que	os	aparece	en	un	documento	.doc
+d) Buscad	un	data	frame	en	algún	repositorio	de	datos	de	Biomedicina,	descargad	un
+conjunto	de	datos	en	«.csv»	e	importad	este	fichero	a	un	documento	R	Markdown
+usando	el	código	o	el	menú	de	importación	de	RStudio.
+
+
+```{r echo=TRUE}
+library(MASS)
+data("biopsy")
+write.csv(data, file="biopsy.csv") # Data biopsy se guarda en archivo <<csv>>
+```
+
+```{r echo=TRUE}
+data("Melanoma")
+write.csv(data, file='Melanoma.csv')   #Se guarda data en archivo <<csv>>
+write.table(data, file='Melanoma.txt') #Se guarda data en archivo <<txt>>
+library(xlsx)                          #Se importa libreria necesaria para escribir xlsx
+write.xlsx(data, file='Melanoma.xlsx') #Se guarda data en archivo <<xlsx>>
+
+```
+
+```{r echo=TRUE}
+resumen <- summary(data$age)
+capture.output(resumen, file="Melanoma_age_resumen.doc")
+
+```
+
+
+
+
+
+
