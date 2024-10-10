@@ -1,0 +1,131 @@
+---
+title: "LAB 1"
+author: "Carlos Serrano Pinto"
+
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Ejemplo 1:
+
+Crear un documento **R Markdown** que se exporte a una página **HTML** y que contenga un párrafo de texto en negrita y uno en cursiva, una imagen y un enlace. 
+
+**Hollow Knight es un videojuego perteneciente al género metroidvania desarrollado y publicado por Team Cherry. El videojuego fue inicialmente lanzado para Microsoft Windows en febrero de 2017, y más tarde para macOS y Linux en abril de 2017. La adaptación para Nintendo Switch fue lanzada el 12 de junio de 2018. El desarrollo fue parcialmente financiado como un proyecto Kickstarter que obtuvo 57 000 dólares hasta finales de 2014.El juego fue lanzado en las consolas PlayStation 4 y Xbox One el 25 de septiembre de 2018**
+
+*El videojuego cuenta la historia del Caballero, en su búsqueda para descubrir los secretos del largamente abandonado reino de Hallownest, cuyas profundidades atraen a los aventureros y valientes con la promesa de tesoros o la respuesta a misterios antiguos.*
+
+Información obtenida de [Wikipedia/Hollow_Knight](https://es.wikipedia.org/wiki/Hollow_Knight)
+
+![Portada de juego](Hollow_Knight_first_cover_art.webp.png){width=width height=height}
+
+
+## Ejemplo 2:
+
+Uno de los paquetes más utilizados para trabajar con conjuntos de datos es el paquete *MASS* y también *Vioplot*. Para instalarlos, haríamos lo siguiente:
+
+```
+install.packages("MASS", "vioplot") #instalamos los paquetes
+```
+
+Si además queremos visualizar unos datos concretos del paquete
+
+```{r echo=TRUE}
+library(knitr)
+library("datasets")
+data("iris") #cargamos los datos a RStudio
+kable(head(iris)) #mostramos la información del conjunto de datos
+```
+Si queremos también acceder a la documentación de un paquete, por ejemplo, **stats**:
+
+```{r echo=TRUE}
+packageDescription("stats")
+
+```
+
+Otras funcionalidades para trabajar con paquetes de R son las siguientes:
+
+| Comando | Función |
+|:--------: |:---------:|
+| remove.packages() | Eliminar un paquete |
+| old.packages() | Comprobar si los paquetes están actualizados |
+| update.packages() | Actualizar todos los paquetes |
+| install.packages() | Para actualizar solo un paquete |
+
+
+## Ejemplo 3:
+
+Imagina que queremos importar un documento <<.csv>>; podremos usar el siguiente código con un fichero :
+[Archivo obtenido desde Kaggle](https://www.kaggle.com/datasets/imdevskp/corona-virus-report)
+
+```{r echo=TRUE}
+library(readr)
+covid_dataset <- read_csv('country_wise_latest.csv')
+kable(head(covid_dataset)) # kable muestra salida con visual de tabla. head muestra los primeros resultados
+
+```
+
+También podemos exportar datos en formatos **txt, csv, xlsx**, usando:
+
+```
+write.csv("data", file="home/Documents/Data2.csv")
+```
+
+Para exportar en formato **SPSS, SAS**, debemos usar librerías como *foreing*:
+
+```
+library(foreing)
+write.foreing("data", "home/Documents/Data2.spss", package="SPSS")
+```
+
+## Ejemplo 4:
+
+Se generarán datos para exportarlos:
+```{r echo=TRUE}
+edad = c(12,13,23,21,24,5,67,43,45,8,99,87,54)
+sexo = c("m","f","m","f","m","f","m","f","m","f","m","f", "f")
+data = data.frame(edad, sexo)
+write.csv(data, file="salida1.csv") #exporto a un archivo .csv
+write.csv(data, file="salida2.csv", row.names = F) #elimino los números o index de fila
+write.table(data, file="salida3.txt") #exporto a un archivo de texto
+```
+
+Por otro lado, si quisiéramos exportar un output o resultado como un resumen de una
+variable que sea de nuestro interés, podríamos usar:
+
+```{r echo=TRUE}
+resumen = summary(data)
+capture.output(resumen, file="resumen.doc")
+```
+
+
+## Estructuras de datos en R
+
+### Tipología de datos
+
+Los tipos de datos en **R** son los siguientes:
+
+| **Tipos de datos** | **Nombre** | **Expresión en R** |
+|--------------------|------------|--------------------|
+| Datos numéricos    | Numeric    | num <- 1.0         |
+| Datos enteros      | Integer    | int <- 2           |
+| Datos lógicos      | Logical    | TRUE - FALSE       |
+| Factores           | Factor     | factor             |
+
+### Operadores
+
+Para asignación de variables, usamos **<-** o **=**
+
+```{r echo=TRUE}
+v1 <- 100
+v2 <- 50
+v3 = 30
+
+cat(v1, v2, v3)
+```
+
+Los operadores aritméticos son:
+* **suma** : +
+* **resta**: -

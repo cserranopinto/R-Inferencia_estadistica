@@ -1,0 +1,7 @@
+      edad           sexo          
+ Min.   : 5.00   Length:13         
+ 1st Qu.:13.00   Class :character  
+ Median :24.00   Mode  :character  
+ Mean   :38.54                     
+ 3rd Qu.:54.00                     
+ Max.   :99.00                     
