@@ -1,0 +1,149 @@
+---
+title: "PEC1-Carlos_Serrano_Pinto"
+author: "cserrano"
+date: "2024-10-21"
+output: html_document
+---
+
+# Sección 1: Importación, exportación y gestión de datos.
+
+## Ejercicio 1
+
+1.1 Importar los datos del archivo healthcare_dataset.csv. Guardar estos datos en un data frame llamado
+healthcare y mostrar los 10 primeros y últimos registros del conjunto de datos.
+
+```{r echo=TRUE}
+library(readr)
+library(knitr)
+healthcare <- read_csv('healthcare_dataset.csv')
+kable(head(healthcare, 10))
+```
+
+```{r echo=TRUE}
+
+kable(tail(healthcare, 10))
+
+```
+
+
+1.2. A partir del conjunto datos definido, healthcare, describir las características del
+conjunto de datos como el nombre de las variables, el tipo de datos, el tamaño de la
+muestra, y prospección de valores nulos. Además, valorar qué tipo de estudio,
+gráficos, etc... podréis realizar en función del tipo de variables.
+
+
+
+## Ejercicio 2
+
+A partir del conjunto de datos bacteria del paquete MASS de Rstudio
+
+2.1 En base a las cuestiones trabajadas al ejercicio anterior, mostrar la información más
+relevante de la estructura de este conjunto de datos. Sugerid y justificad alguna
+acción a realizar sobre dicho conjunto de datos (transformación o categorización de
+alguna de las variables, eliminación de algún tipo de datos,...)
+
+```{r echo=TRUE}
+library(MASS)
+data("bacteria")
+kable(head(bacteria))
+```
+
+
+2.2. Exportad el data frame bacteria a un archivo en formato *.csv especificando la
+ubicación del archivo.
+
+
+
+
+
+## Ejercicio 3
+
+3.3 En base al ejercicio anterior, seleccionad un paquete de Rstudio y un conjunto de datos
+específico. Justificad la elección del dataset correspondiente (temática, diversidad de
+tipos de variables, tipos de estudios a realizar, …) y mostrad la información más
+relevante de la estructura del dataset escogido.
+
+
+
+# Sección 2: Análisis básico del conjunto de datos
+
+## Ejercicio 4
+
+4.1. Definid dos data frame de acuerdo a la variable Gender para los valores Male y Female, 
+posteriormente, exportad ambos data frame en dos archivos healthcare_f.csv y healthcare_m.csv
+
+
+
+
+
+4.2. Calculad la media de edad de los hombres cuyo tipo de sangre (Blood.Type) sea AB+ y, por otra parte, mostrad la información de la condición médica (Medical.Condition), la medicación asignada (Medication) y el resultado del test realizado (Test.Results)
+
+
+
+
+
+4.3. Definid una variable, healthcare_maxb, que guarde las características del
+paciente o pacientes, que registren el máximo valor en la factura pagada en el hospital.
+
+
+
+4.5. Definid una matriz, healthcare_matrix, que muestre las columnas Gender, Medical.Condition, Medication y Test.Results. En qué casos sería conveniente utilizar una estructura de tipo matriz en lugar de un data frame?
+
+
+
+4.6. En base a las cuestiones realizadas anteriormente, añadid una nueva cuestión
+de prospección del conjunto de datos. Por ejemplo, algunas sugerencias serían
+realizar la comparación de grupos sanguíneos y condición médica en función del
+género, o calcular la media del importe de la factura según la dolencia (condición médica), etc
+
+
+
+# Sección 3: Estadística descriptiva y gráficos
+
+
+## Ejercicio 5
+
+
+5.1. A partir del conjunto de datos citado, importad el archivo a un data frame
+remote_mental y mostrad las características del conjunto de datos. Posteriormente,
+calculad los estadísticos descriptivos más relevantes y comentad los resultados.
+
+
+5.2. Realizad un diagrama de cajas sobre las variables Age y
+Hours_Worked_Per_Week. ¿Qué se puede extraer de este gráfico?
+
+
+
+5.3. Realizad la matriz de correlación del conjunto de datos remote_mental y
+valorad la viabilidad de realizar un modelo de regresión sobre un conjunto de
+variables definido.
+
+
+
+## Ejercicio 6
+A partir del conjunto de datos *remote_mental* trabajado en el apartado anterior:
+
+6.1. Mostrad las tablas de frecuencias relativas y absolutas de las variables
+*Job_Role* y *Mental_Health_Condition*. Representad también una tabla de
+frecuencias relativas cruzadas y explicad qué conclusiones se podrían obtener de la
+relación entre ambas variables.
+
+6.2. Realizad un histograma de la variable Hours_Worked_Per_Week, un
+diagrama de barras de la variable Mental_Health_Condition, y combinad los gráficos
+anteriores en una representación gráfica común. Podéis utilizar la función layout() y
+utilizad diversos recursos visuales para su representación.
+
+6.3. Utilizando el paquete de gráficos ggplot2, realizad un gráfico de tipo qplot
+de la variable Job_Role y Hours_Worked_Per_Week. Utilizad diversos recursos
+visuales para su representación y comentad los resultados. Por otra parte, realizad la
+representación de otras variables, utilizando otro tipos de gráficos, por ejemplo,
+ggplot() y el paquete tydiverse.
+
+
+
+
+
+
+
+
+
