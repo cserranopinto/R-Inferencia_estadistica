@@ -16,13 +16,11 @@ healthcare y mostrar los 10 primeros y últimos registros del conjunto de datos.
 library(readr)
 library(knitr)
 healthcare <- read_csv('healthcare_dataset.csv')
-kable(head(healthcare, 10))
+kable(head(healthcare, 10)) # Primeros 10 registros
 ```
 
 ```{r echo=TRUE}
-
-kable(tail(healthcare, 10))
-
+kable(tail(healthcare, 10)) # Últimos 10 registros
 ```
 
 
@@ -30,6 +28,24 @@ kable(tail(healthcare, 10))
 conjunto de datos como el nombre de las variables, el tipo de datos, el tamaño de la
 muestra, y prospección de valores nulos. Además, valorar qué tipo de estudio,
 gráficos, etc... podréis realizar en función del tipo de variables.
+
+
+```{r echo=TRUE}
+print(dim(healthcare))
+print(summary(healthcare))
+```
+
+```{r echo=TRUE}
+print(table(is.na(healthcare)))
+print(colSums(is.na(healthcare)))
+```
+
+
+El conjunto de datos está compuesto de 55500 observaciones (filas) y 15 variables (columnas). En estas variables, se encuentran Name, Gender, Blood Type, Medical Condition, Doctor, Hospital, Insurance Providery Admission Type, Medication y Test Results que corresponden a variables de tipo string. Las variables Age, Billing Amount y Room Number corresponden a variables numéricas. Y las variables Date of Admission y Discharge Date corresponden a fechas.
+Se destaca que en el conjunto de datos no hay valores Nan, teniendo un total de 832500 valores válidos en total.
+
+Con los tipos de datos presentes, se podría estimar a los doctores con mayor carga de pacientes. La tendencia de tiempo de permanencia y resultado clínico. ##### RELLENAR ####
+
 
 
 
@@ -45,15 +61,27 @@ alguna de las variables, eliminación de algún tipo de datos,...)
 ```{r echo=TRUE}
 library(MASS)
 data("bacteria")
-kable(head(bacteria))
+kable(head(bacteria, 20))
 ```
+
+```{r echo=TRUE}
+print(table(is.na(bacteria)))
+print(colSums(is.na(bacteria)))
+
+```
+
+
 
 
 2.2. Exportad el data frame bacteria a un archivo en formato *.csv especificando la
 ubicación del archivo.
 
+```{r echo=TRUE}
+write.csv(bacteria, file='Resultados/bacteria.csv')
 
+```
 
+El dataset 'bacteria' es guardado en formato de texto ".csv" en el directorio Resultados
 
 
 ## Ejercicio 3
@@ -62,6 +90,37 @@ ubicación del archivo.
 específico. Justificad la elección del dataset correspondiente (temática, diversidad de
 tipos de variables, tipos de estudios a realizar, …) y mostrad la información más
 relevante de la estructura del dataset escogido.
+
+```{r echo=TRUE}
+data("biopsy")
+kable(head(biopsy, 15))
+print(table(is.na(biopsy)))
+print(colSums(is.na(biopsy)))
+
+```
+Se escogió el dataset "biopsy" del paquete MASS. Este set de datos contiene 699 observaciones (filas) y 11 variables. Al importar el dataset, los nombres de las columnas no son descriptivos. Revisando la documentación, las claves de las columnas son:
+
+- V1 : clump thikness
+
+- v2: uniformity of cell size
+
+- v3: uniformity of cell shape
+
+- v4: marginal adhesion
+
+- v5: single epithelial cell size
+
+- v6: bare nuclei
+
+- v7: bland chromatin
+
+- v8: normal nucleoli
+
+- v9: mitoses
+
+El tipo de datos es numérico para todas las columnas Vx, donde cada número hace referencia a un valor categórico.
+
+El dataset cuenta con 16 valores 'na' en total, todos presentes en la columna v6 (bare nuclei).
 
 
 
@@ -72,19 +131,43 @@ relevante de la estructura del dataset escogido.
 4.1. Definid dos data frame de acuerdo a la variable Gender para los valores Male y Female, 
 posteriormente, exportad ambos data frame en dos archivos healthcare_f.csv y healthcare_m.csv
 
+```{r echo=TRUE}
+healthcare_f <- subset(healthcare, Gender == 'Female') # Filtra si Gender es igual a Female
+healthcare_m <- subset(healthcare, Gender == 'Male') # Filtra si Gender es igual a Male
+write.csv(healthcare_f, file='Resultados/healthcare_f.csv') # Guarda '.csv' con filtro Female
+write.csv(healthcare_m, file='Resultados/healthcare_m.csv') # Guarda '.csv' con filtro Male
+```
 
+Archivos '*.csv' son guardados en directorio Resultados, ubicado en el actual directorio de trabajo.
 
 
 
 4.2. Calculad la media de edad de los hombres cuyo tipo de sangre (Blood.Type) sea AB+ y, por otra parte, mostrad la información de la condición médica (Medical.Condition), la medicación asignada (Medication) y el resultado del test realizado (Test.Results)
+```{r echo=TRUE}
+grupo_abp <- subset(healthcare, Gender == 'Male' & `Blood Type` == 'AB+')
+media_abp <- mean(grupo_abp$Age)
+print(round(media_abp,2))
+```
 
+El promedio de edad de hombres con tipo de sangre AB+ en el dataset healthcare es 51.16 años.
 
+```{r echo=TRUE}
 
+sub_healt <- subset(grupo_abp, select = c(`Medical Condition`, Medication, `Test Results`))
+table(sub_healt)
+
+```
+
+Utilizando el mismo subset con el que se calculó el promedio de edad para hombres con sangre tipo AB+, se usó la función table, el cual entrega tabla de frecuencias para las variables entregadas.
 
 
 4.3. Definid una variable, healthcare_maxb, que guarde las características del
 paciente o pacientes, que registren el máximo valor en la factura pagada en el hospital.
 
+```{r echo=TRUE}
+healthcare_maxb <- subset(healthcare, `Billing Amount` == max(`Billing Amount`))
+kable(healthcare_maxb)
+```
 
 
 4.5. Definid una matriz, healthcare_matrix, que muestre las columnas Gender, Medical.Condition, Medication y Test.Results. En qué casos sería conveniente utilizar una estructura de tipo matriz en lugar de un data frame?
@@ -109,14 +192,45 @@ remote_mental y mostrad las características del conjunto de datos. Posteriormen
 calculad los estadísticos descriptivos más relevantes y comentad los resultados.
 
 
+```{r echo=TRUE}
+remote_mental <- read.csv(file = 'Impact_of_Remote_Work_on_Mental_Health.csv')
+summary(remote_mental)
+```
+
+
 5.2. Realizad un diagrama de cajas sobre las variables Age y
 Hours_Worked_Per_Week. ¿Qué se puede extraer de este gráfico?
 
+```{r echo=TRUE}
+library(plotly)
+graf1 <- plot_ly(x = remote_mental$Age, y = remote_mental$Hours_Worked_Per_Week, type = "box")
+graf1
+
+
+```
 
 
 5.3. Realizad la matriz de correlación del conjunto de datos remote_mental y
 valorad la viabilidad de realizar un modelo de regresión sobre un conjunto de
 variables definido.
+
+```{r echo=TRUE}
+remote_mental_numeric <- subset(remote_mental, select =  c(Age, Years_of_Experience, 
+                                                           Hours_Worked_Per_Week, Number_of_Virtual_Meetings,
+                                                           Work_Life_Balance_Rating, Social_Isolation_Rating, 
+                                                           Company_Support_for_Remote_Work))
+
+kable(cor	(remote_mental_numeric))
+```
+
+
+```{r echo=TRUE}
+
+
+pairs(remote_mental_numeric)
+
+```
+
 
 
 
@@ -127,6 +241,14 @@ A partir del conjunto de datos *remote_mental* trabajado en el apartado anterior
 *Job_Role* y *Mental_Health_Condition*. Representad también una tabla de
 frecuencias relativas cruzadas y explicad qué conclusiones se podrían obtener de la
 relación entre ambas variables.
+
+```{r echo=TRUE}
+
+f_relative <- prop.table(table(remote_mental$Job_Role)) 
+f_relative
+
+```
+
 
 6.2. Realizad un histograma de la variable Hours_Worked_Per_Week, un
 diagrama de barras de la variable Mental_Health_Condition, y combinad los gráficos
