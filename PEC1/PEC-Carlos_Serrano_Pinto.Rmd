@@ -1,5 +1,5 @@
 ---
-title: "PEC1-Carlos_Serrano_Pinto"
+title: "PEC1 - Carlos Serrano Pinto"
 author: "cserrano"
 date: "2024-10-21"
 output: html_document
@@ -267,7 +267,6 @@ kable(cor	(remote_mental_numeric))
 
 ```{r echo=TRUE}
 
-
 pairs(remote_mental_numeric)
 
 ```
@@ -330,16 +329,13 @@ kable(prop.table(table(remote_mental$Job_Role)))
 
 
 ```{r echo=TRUE}
-print('Frecuencia absoluta Mental_Health_Condition')
 kable(table(remote_mental$Mental_Health_Condition))
 ```
 ```{r echo=TRUE}
-print('Frecuencia relativa Mental_Health_Condition')
 kable(prop.table(table(remote_mental$Mental_Health_Condition)))
 ```
 
 ```{r echo=TRUE}
-print('Frecuencia relativa cruzada:  Job_Role y Mental_Health_Condition')
 kable(prop.table(table(remote_mental$Job_Role,remote_mental$Mental_Health_Condition)))
 ```
 La tabla de frecuencia de Job_Role indican que el rol más frecuente es Project Manager (14.76%), y en menor medida Marketing (13.66%).
@@ -370,6 +366,8 @@ barplot(table(remote_mental$Mental_Health_Condition),
         ylab = 'N° de trabajadores')
 
 ```
+
+
 ```{r echo=TRUE}
 
 layout(matrix(c(1, 2), nrow = 1, byrow = TRUE), widths = c(20,20) )
@@ -396,11 +394,22 @@ visuales para su representación y comentad los resultados. Por otra parte, real
 representación de otras variables, utilizando otro tipos de gráficos, por ejemplo,
 ggplot() y el paquete tydiverse.
 
+```{r echo=TRUE}
 
-
-
-```{r}
 library(ggplot2)
+
+qplot(Job_Role,
+      Hours_Worked_Per_Week,
+      data = remote_mental, 
+      geom="boxplot", 
+      fill = Job_Role,
+      xlab="Rol",
+      ylab="Horas Trabajadas por Semana")
+```
+
+
+
+```{r echo=TRUE}
 
 qplot(Job_Role, 
       Hours_Worked_Per_Week,
@@ -409,8 +418,50 @@ qplot(Job_Role,
       stackdir = "center", 
       fill = Job_Role,
       xlab="Rol",
-      ylab="Horas Trabajadas por Semana",
+      ylab="Horas Trabajadas por Semana"
       )
 ```
+
+Al analizar las variables Job_Role y Hours_Worked_Per_Week, notamos que Software Engineer en promedio trabaja más horas a la semana (sobre 40 horas), mientras que Data Science trabaja menos horas a la semana (bajo 40 horas). Se destaca que todos los trabajos van desde 20 a 60 horas por semana. En la gráfica de violinplot se nota que la densidad de registros parece ser en general homogénea.
+
+
+```{r echo=TRUE}
+
+matriz <- prop.table(table(remote_mental$Job_Role, remote_mental$Mental_Health_Condition))
+
+matriz_df <- as.data.frame(matriz)
+
+colnames(matriz_df) <- c("Job_Role", "Mental_Health_Condition", "Frecuencia")
+
+ggplot(matriz_df, aes(x = Job_Role, y = Mental_Health_Condition, fill = Frecuencia)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "blue") +
+  theme_minimal() +
+  labs(title = "Heatmap de Frecuencia", x = "Job Role", y = "Mental Health Condition")
+
+```
+
+Se exploraron las relaciones de Job_Role y Mental_Health_Condition, donde se observa en un heatmap que los Data Scientist sufren de mayor Burnout, que junto a  Recursos humanos es la principal afección.
+Los Project Manager y Sales sufren en mayor medida de ansiedad, y Software Engineer y Designer tienen como principal afección la depresión.
+
+
+```{r echo=TRUE}
+
+matriz <- prop.table(table(remote_mental$Mental_Health_Condition, remote_mental$Region))
+
+matriz_df <- as.data.frame(matriz)
+
+colnames(matriz_df) <- c("Mental_Health_Condition", "Region", "Frecuencia")
+
+ggplot(matriz_df, aes(x = Mental_Health_Condition, y = Region, fill = Frecuencia)) +
+  geom_tile() +
+  scale_fill_gradient(low = "white", high = "red") +
+  theme_minimal() +
+  labs(title = "Heatmap de Frecuencia", x = "Mental Health Condition", y = "Region")
+
+```
+Usando también un heatmap, se observa la relación entre Mental Healt Condition y Region. Se observa que la principal afección de América del Sur es la depresión. En Oceania, la principal condición es ansiedad, seguido de Burnout. En Norte América se registran menos niveles de condiciones, pero la que predomina es Burnout, al igual que en Europa. En Asia, la ansiedad y burnout son las principales afecciones, al igual que en Africa.
+
+
 
 
