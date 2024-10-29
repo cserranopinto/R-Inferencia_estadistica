@@ -44,7 +44,7 @@ print(colSums(is.na(healthcare)))
 El conjunto de datos está compuesto de 55500 observaciones (filas) y 15 variables (columnas). En estas variables, se encuentran Name, Gender, Blood Type, Medical Condition, Doctor, Hospital, Insurance Providery Admission Type, Medication y Test Results que corresponden a variables de tipo string. Las variables Age, Billing Amount y Room Number corresponden a variables numéricas. Y las variables Date of Admission y Discharge Date corresponden a fechas.
 Se destaca que en el conjunto de datos no hay valores Nan, teniendo un total de 832500 valores válidos en total.
 
-Con los tipos de datos presentes, se podría estimar a los doctores con mayor carga de pacientes. La tendencia de tiempo de permanencia y resultado clínico. ##### RELLENAR ####
+Con los tipos de datos presentes, se podría estimar a los doctores con mayor carga de pacientes. Se podría también obtener la tendencia de tiempo de permanencia y el costo a pagar, de modo de generar una regresión y estimar un valor. Adicionalemente, se podrían ver tendencias entre tiempo de permanencia y test de resultado. Se podría determinar el uso de medicación más comun para cada afección.
 
 
 
@@ -61,7 +61,8 @@ alguna de las variables, eliminación de algún tipo de datos,...)
 ```{r echo=TRUE}
 library(MASS)
 data("bacteria")
-kable(head(bacteria, 20))
+print(kable(summary(bacteria)))
+print(kable(head(bacteria, 20)))
 ```
 
 ```{r echo=TRUE}
@@ -70,8 +71,21 @@ print(colSums(is.na(bacteria)))
 
 ```
 
+El dataset 'bacteria' consta de 220 registros y 6 variables, donde:
 
+- y: Presencia o ausencia 
 
+- ap: active / placebo
+
+- hilo: hi / low 
+
+- week: semana de prueba
+
+- ID: Id de muestra
+
+- trt: placebo, drug, drug+
+
+En el dataset no se encuentran datos nulos, teniendo un total de 1320 valores válidos. Este set de datos contiene redundancia en sus variables, donde la variable trt es una mezcla de 'ap' y 'hilo'. Se podría añadir la clave 'placebo+' y así eliminar las variables ap y hilo, puesto que la variable trt tendría implícitamente ambos valores.
 
 2.2. Exportad el data frame bacteria a un archivo en formato *.csv especificando la
 ubicación del archivo.
@@ -118,9 +132,13 @@ Se escogió el dataset "biopsy" del paquete MASS. Este set de datos contiene 699
 
 - v9: mitoses
 
+- class: benign, malignant
+
 El tipo de datos es numérico para todas las columnas Vx, donde cada número hace referencia a un valor categórico.
 
 El dataset cuenta con 16 valores 'na' en total, todos presentes en la columna v6 (bare nuclei).
+
+Considero que este dataset sirve para correlacionar características morfológicas de células y asociación con una enferemedad. Si bien se pierden unidades de medida en la categorización, esto también podría simplificar una toma de decisión para eventualmente clasificar en benigno o maligno. También podría ser un buen dataset para entrenar un modelo de aprendizaje supervizado.
 
 
 
@@ -173,13 +191,28 @@ kable(healthcare_maxb)
 4.5. Definid una matriz, healthcare_matrix, que muestre las columnas Gender, Medical.Condition, Medication y Test.Results. En qué casos sería conveniente utilizar una estructura de tipo matriz en lugar de un data frame?
 
 
+```{r}
+healthcare_matrix <- matrix(c(healthcare$Gender, healthcare$`Medical Condition`,
+                              healthcare$Medication, healthcare$`Test Results`),
+                            ncol = 4)
+head(healthcare_matrix)
+
+```
+La diferencia entre matrices y dataframe es que, en matrices, los tipos de datos son homogéneos. Es decir, todos los valores son numéricos o booleanos o de caracteres, etc. En Cambio, los dataframe pueden contener mezclas de variables y tipos de datos. Es beneficioso trabajar con matrices principalmente para el trabajo numérico, puesto que hay operaciones que están optimizadas para trabajar con estos tipos de datos.
+
+
 
 4.6. En base a las cuestiones realizadas anteriormente, añadid una nueva cuestión
 de prospección del conjunto de datos. Por ejemplo, algunas sugerencias serían
 realizar la comparación de grupos sanguíneos y condición médica en función del
 género, o calcular la media del importe de la factura según la dolencia (condición médica), etc
 
+```{r echo=TRUE}
 
+emergencia <- subset(healthcare, `Admission Type` == 'Emergency')
+table(emergencia$`Test Results`,emergencia$`Medical Condition`)
+```
+En ésta prospección, se seleccionan los registros donde el tipo de admisión es de emergencia, y se obtiene tabla de frecuencias absolutas entre condición médica y Resultados. De aquí se desprende que, quienes más entran al sistema por emergencias son por condición de Cancer y Obesidad.
 
 # Sección 3: Estadística descriptiva y gráficos
 
@@ -196,7 +229,15 @@ calculad los estadísticos descriptivos más relevantes y comentad los resultado
 remote_mental <- read.csv(file = 'Impact_of_Remote_Work_on_Mental_Health.csv')
 summary(remote_mental)
 ```
-
+```{r echo=TRUE}
+print(table(remote_mental$Industry))
+print(table(remote_mental$Stress_Level))
+print(table(remote_mental$Mental_Health_Condition))
+print(table(remote_mental$Access_to_Mental_Health_Resources))
+print(table(remote_mental$Productivity_Change))
+```
+El dataset corresponde a un conjunto de datos con información de variables de salud mental, donde se registran otras variables como Industria de trabajos, Niveles de estrés, Condición mental, Horas trabajadas por semana, etc. 
+Los individuos registrados van de los 22 a 60 años, con un trabajo semanal cercano a 40 horas. Sin mucha diferencia, el nivel de estrés más representado es el alto, segudio por medio y finalmente bajo. La condición médica más común es el 'Burnout'
 
 5.2. Realizad un diagrama de cajas sobre las variables Age y
 Hours_Worked_Per_Week. ¿Qué se puede extraer de este gráfico?
@@ -208,7 +249,7 @@ graf1
 
 
 ```
-
+Del gráfico de cajas se observa que el promedio de trabajo semanal para todas las edades ronda las 40 horas semanales. Es destacable que a pesar de la edad, las horas de trabajo por semana tengan rangos similares, siendo la mínima de 20 min a 60 horas. 
 
 5.3. Realizad la matriz de correlación del conjunto de datos remote_mental y
 valorad la viabilidad de realizar un modelo de regresión sobre un conjunto de
@@ -230,8 +271,44 @@ kable(cor	(remote_mental_numeric))
 pairs(remote_mental_numeric)
 
 ```
+```{r echo=TRUE}
+recode <- remote_mental
+
+recode$Stress_Level[recode$Stress_Level=='Low'] <- 1
+recode$Stress_Level[recode$Stress_Level=='Medium'] <- 2
+recode$Stress_Level[recode$Stress_Level=='High'] <- 3
+recode$Stress_Level <- as.integer(recode$Stress_Level)
+
+recode$Productivity_Change[recode$Productivity_Change=='Decrease'] <- 1
+recode$Productivity_Change[recode$Productivity_Change=='No Change'] <- 2
+recode$Productivity_Change[recode$Productivity_Change=='Increase'] <- 3
+recode$Productivity_Change <- as.integer(recode$Productivity_Change)
+
+recode$Satisfaction_with_Remote_Work[recode$Satisfaction_with_Remote_Work=='Unsatisfied'] <- 1
+recode$Satisfaction_with_Remote_Work[recode$Satisfaction_with_Remote_Work=='Neutral'] <- 2
+recode$Satisfaction_with_Remote_Work[recode$Satisfaction_with_Remote_Work=='Satisfied'] <- 3
+recode$Satisfaction_with_Remote_Work <- as.integer(recode$Satisfaction_with_Remote_Work)
 
 
+```
+
+
+```{r echo=TRUE}
+recode_numeric <- subset(recode, select =  c(Age, Years_of_Experience, 
+                                            Hours_Worked_Per_Week, Number_of_Virtual_Meetings,
+                                            Work_Life_Balance_Rating, Social_Isolation_Rating, 
+                                            Company_Support_for_Remote_Work, Stress_Level,
+                                            Productivity_Change, Satisfaction_with_Remote_Work))
+
+kable(cor	(recode_numeric))
+```
+
+```{r echo=TRUE}
+pairs(recode_numeric)
+
+```
+
+Se realizó correlación entre las variables numéricas de 'remote_mental' sin encontrar relación lineal. Explorando la posibilidad que variables categoricas tuviesen relación lineal, se recodificaron algunas variables, sin embargo tampoco se obtuvo una relación lineal observable.
 
 
 ## Ejercicio 6
@@ -243,17 +320,75 @@ frecuencias relativas cruzadas y explicad qué conclusiones se podrían obtener 
 relación entre ambas variables.
 
 ```{r echo=TRUE}
-
-f_relative <- prop.table(table(remote_mental$Job_Role)) 
-f_relative
-
+kable(table(remote_mental$Job_Role))
 ```
+
+```{r echo=TRUE}
+kable(prop.table(table(remote_mental$Job_Role)))
+```
+
+
+
+```{r echo=TRUE}
+print('Frecuencia absoluta Mental_Health_Condition')
+kable(table(remote_mental$Mental_Health_Condition))
+```
+```{r echo=TRUE}
+print('Frecuencia relativa Mental_Health_Condition')
+kable(prop.table(table(remote_mental$Mental_Health_Condition)))
+```
+
+```{r echo=TRUE}
+print('Frecuencia relativa cruzada:  Job_Role y Mental_Health_Condition')
+kable(prop.table(table(remote_mental$Job_Role,remote_mental$Mental_Health_Condition)))
+```
+La tabla de frecuencia de Job_Role indican que el rol más frecuente es Project Manager (14.76%), y en menor medida Marketing (13.66%).
+La tabla de frecuencia de Mental_Health_Condition indican que la condición más frecuente es Burnout seguido de Ansiedad y luego por depresión.
+
+La tabla relativa cruzada indica que los Project Manager sufren más ansiedad en comparación con los otros trabajos.Los Data scientist sufren más de Burnout y los Software engineer sufren mayormente de depresión. el trabajo de Marketing es el que presenta mayor porcentaje sin condición mental.
 
 
 6.2. Realizad un histograma de la variable Hours_Worked_Per_Week, un
 diagrama de barras de la variable Mental_Health_Condition, y combinad los gráficos
 anteriores en una representación gráfica común. Podéis utilizar la función layout() y
 utilizad diversos recursos visuales para su representación.
+
+
+```{r echo=TRUE}
+hist(remote_mental$Hours_Worked_Per_Week, breaks=20, col="#99d8c9",
+     xlab = 'Horas trabajadas por semana', 
+     main="Horas trabajadas por semana")
+```
+```{r echo=TRUE}
+
+library(RColorBrewer)
+color <- brewer.pal(5, "Set2") 
+
+barplot(table(remote_mental$Mental_Health_Condition), 
+        col=color,
+        xlab = 'Condicion Mental',
+        ylab = 'N° de trabajadores')
+
+```
+```{r echo=TRUE}
+
+layout(matrix(c(1, 2), nrow = 1, byrow = TRUE), widths = c(20,20) )
+
+hist(remote_mental$Hours_Worked_Per_Week, breaks=20, col="#99d8c9",
+     xlab = 'Horas trabajadas por semana',
+     ylab = 'Frecuencia',
+     main="Horas trabajadas por semana")
+
+color <- brewer.pal(5, "Set2") 
+barplot(table(remote_mental$Mental_Health_Condition), 
+        col=color,
+        ylab = 'N° de trabajadores',
+        main="Condición mental por trabajador",
+        las=2)
+
+
+```
+
 
 6.3. Utilizando el paquete de gráficos ggplot2, realizad un gráfico de tipo qplot
 de la variable Job_Role y Hours_Worked_Per_Week. Utilizad diversos recursos
@@ -264,8 +399,18 @@ ggplot() y el paquete tydiverse.
 
 
 
+```{r}
+library(ggplot2)
 
-
-
+qplot(Job_Role, 
+      Hours_Worked_Per_Week,
+      data=remote_mental,
+      geom="violin",
+      stackdir = "center", 
+      fill = Job_Role,
+      xlab="Rol",
+      ylab="Horas Trabajadas por Semana",
+      )
+```
 
 
